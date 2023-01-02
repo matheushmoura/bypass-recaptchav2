@@ -6,16 +6,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 sample_rate = 48000
+
 def gravar_audio_captcha(arquivo_audio, sample_rate, segundos):
     with sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True).recorder(samplerate=sample_rate) as mic:
         data = mic.record(numframes=sample_rate * segundos)
         sf.write(file=arquivo_audio, data=data[:, 0], samplerate=sample_rate)
+
 def audio_para_texto_captcha(arquivo_audio, segundos):
     r = sr.Recognizer()
     with sr.AudioFile(arquivo_audio) as source:
         audio = r.record(source, duration=segundos)
         text = r.recognize_google(audio, language='en-US', show_all=True)
         return text
+
 def bypasscaptchaV2(driver, submit_selector, iframe_selector):
     arquivo_audio = "recaptcha_"+str(datetime.now().strftime("%Y-%m-%d_%H-%M"))+".wav"
     segundos = 5
